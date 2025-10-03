@@ -17,7 +17,7 @@ Définir la stratégie d’élaboration d’un modèle d’apprentissage supervi
 Mettre en œuvre un logiciel de version de code
 Suivre la performance d’un modèle en production et en assurer la maintenance
 Livrables
-Le notebook comportant l'analyse exploratoire des données, la création de features engineering et la sélection de features ainsi que l'entraînement, d'optimisation et de sélection de modèle : Guille_Anais_1_modelisation.ipynb
+Le notebook comportant l'analyse exploratoire des données, la création de features engineering et la sélection de features ainsi que l'entraînement, d'optimisation et de sélection de modèle : Adriana_Tint_modelisation.ipynb et Adriana_Tint_modelisation_suite.ipynb
 Le script python des fonctions utilisées dans le notebook : fonctions.py
 Le script python de la configuration de l’API : api.py
 Le script python de la configuration du dashboard pour Streamlit : dashboard.py
