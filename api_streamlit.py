@@ -64,22 +64,33 @@ if st.button("Prédiction du client"):
         prediction = model.predict_proba(X_client_scaled)[0][1]
         st.write(f"Probabilité d'accord du prêt: {prediction:.2f}")
 
+# --- Placeholders pour les charts ---
+global_placeholder = st.empty()
+local_placeholder = st.empty()
+
 # Feature importance globale
-if st.checkbox("Afficher l'importance globale des features (SHAP)"):
-    st.bar_chart(global_shap_importance.set_index('feature')['importance'].head(10))
+if st.checkbox("Afficher l'importance globale des features (SHAP)", key="global_importance_chk"):
+    if not global_shap_importance.empty:
+        with global_placeholder.container():
+            st.subheader("Importance globale des features")
+            st.bar_chart(global_shap_importance.set_index('feature')['importance'].head(10))
+    else:
+        st.warning("Aucune donnée globale disponible")
 
 # Feature importance locale
-if st.checkbox("Afficher l'importance locale des features pour le client"):
+if st.checkbox("Afficher l'importance locale des features pour le client", key="local_importance_chk"):
     client_data = test_data[test_data['client_id'] == client_id]
     if client_data.empty:
-        st.error("Client non trouvé")
+        local_placeholder.error("Client non trouvé")
     else:
         X_client = client_data.drop('client_id', axis=1)
         X_client_scaled = scaler.transform(X_client)
         shap_values = explainer(X_client_scaled, check_additivity=False)
         local_shap_values = np.abs(shap_values.values[0])
         local_shap_importance = pd.DataFrame(
-            list(zip(X_client.columns, local_shap_values)), 
+            list(zip(X_client.columns, local_shap_values)),
             columns=['feature', 'importance']
         ).sort_values(by='importance', ascending=False)
-        st.bar_chart(local_shap_importance.set_index('feature')['importance'].head(10))
+        with local_placeholder.container():
+            st.subheader(f"Importance locale des features - Client {client_id}")
+            st.bar_chart(local_shap_importance.set_index('feature')['importance'].head(10))
