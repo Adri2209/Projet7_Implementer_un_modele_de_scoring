@@ -107,23 +107,39 @@ def get_prediction():
 
 @app.route('/shap_summary_plot/<int:client_id>', methods=['GET'])
 def shap_summary_plot(client_id):
-    client_data = test_data[test_data['client_id'] == client_id]
-    if client_data.empty:
-        return jsonify({"error": "Client not found"}), 404
+    try:
+        client_data = test_data[test_data['client_id'] == client_id]
+        if client_data.empty:
+            return jsonify({"error": "Client not found"}), 404
 
-    info_client = client_data.drop('client_id', axis=1)
-    info_client_scaled = scaler.transform(info_client)
+        # Supprimer la colonne client_id
+        info_client = client_data.drop('client_id', axis=1)
+        info_client_scaled = scaler.transform(info_client)
 
-    shap_values = explainer(info_client_scaled, check_additivity=False)
-    shap.summary_plot(shap_values.values, info_client, plot_type="bar", max_display=10)
+        # Calcul des valeurs SHAP
+        shap_values = explainer(info_client_scaled, check_additivity=False)
+
+        # Forcer matplotlib à utiliser un backend non interactif pour serveur
+        import matplotlib
+        matplotlib.use('Agg')
+        import matplotlib.pyplot as plt
+
+        # Créer le plot SHAP summary (bar) pour ce client
+        plt.figure(figsize=(8, 6))
+        shap.summary_plot(shap_values.values, info_client, plot_type="bar", max_display=10, show=False)
+
+        # Sauvegarder l'image dans un buffer
+        buf = BytesIO()
+        plt.savefig(buf, format="png", bbox_inches='tight')
+        plt.close()
+        buf.seek(0)
+        image_base64 = base64.b64encode(buf.getvalue()).decode('utf-8')
+
+        return jsonify({"shap_summary_plot": image_base64})
     
-    # Sauvegarder le plot en tant qu'image dans un buffer
-    buf = BytesIO()
-    plt.savefig(buf, format="png")
-    plt.close()
-    buf.seek(0)
-    image_base64 = base64.b64encode(buf.getvalue()).decode('utf-8')
-    return jsonify({"shap_summary_plot": image_base64})
+    except Exception as e:
+        # Retourner l'erreur pour debugging
+        return jsonify({"error": f"Erreur interne du serveur: {str(e)}"}), 500
 
 @app.route('/global_feature_importance', methods=['GET'])
 def global_feature_importance():
