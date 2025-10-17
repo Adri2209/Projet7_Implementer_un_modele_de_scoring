@@ -162,4 +162,6 @@ def local_feature_importance(client_id):
     return jsonify(local_shap_importance_dict)
 
 if __name__ == '__main__':
-    app.run(host="0.0.0.0", port=8000, debug=True)
+    import os
+    port = int(os.environ.get("PORT", 8000))  # Render fournit automatiquement le bon port
+    app.run(host="0.0.0.0", port=port, debug=False)
