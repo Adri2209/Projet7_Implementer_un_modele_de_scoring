@@ -48,6 +48,11 @@ global_shap_importance = pd.DataFrame(list(zip(X_train.columns, global_shap_valu
 def home():
     return 'API pour prédire l\'accord d\'un prêt'
 
+# Endpoint health check pour Render
+@app.route('/health', methods=['GET'])
+def health_check():
+    return {"status": "ok"}, 200
+
 @app.route('/check_client/<int:client_id>', methods=['GET'])
 def check_client_id(client_id):
     if client_id in list(test_data['client_id']):
