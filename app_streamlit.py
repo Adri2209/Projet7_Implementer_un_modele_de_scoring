@@ -9,13 +9,23 @@ import io
 API_URL = "http://127.0.0.1:8000"
 
 st.set_page_config(page_title="Dashboard Scoring Crédit", layout="wide")
-
 st.title("📊 Dashboard de Scoring Crédit")
+
+# --- Fonction utilitaire pour récupérer les données de l'API ---
+def get_api_json(endpoint, method="GET", payload=None):
+    try:
+        if method == "GET":
+            response = requests.get(f"{API_URL}/{endpoint}")
+        elif method == "POST":
+            response = requests.post(f"{API_URL}/{endpoint}", json=payload)
+        response.raise_for_status()
+        return response.json()
+    except requests.exceptions.RequestException as e:
+        st.error(f"Erreur API: {e}")
+        return None
 
 # --- Sélection du client ---
 st.sidebar.header("🔎 Sélection du client")
-
-# Exemple de quelques IDs disponibles (tu peux les mettre à jour avec check_clients.py)
 client_list = list(range(1, 21))
 
 client_choice = st.sidebar.selectbox(
@@ -25,7 +35,7 @@ client_choice = st.sidebar.selectbox(
     key="client_selectbox"
 )
 
-client_id = st.sidebar.number_input(
+client_id_input = st.sidebar.number_input(
     "Ou entrer un ID manuellement",
     min_value=1,
     step=1,
@@ -34,47 +44,51 @@ client_id = st.sidebar.number_input(
 
 # --- Bouton pour charger les infos ---
 if st.button("Charger les infos client", key="load_client_btn"):
-    # On choisit d'abord l'ID de la selectbox si différent
-    selected_id = client_choice if client_id == 1 else client_id
+    # Priorité au number_input si l'utilisateur a entré un ID
+    selected_id = client_id_input if client_id_input else client_choice
 
-    # Récupérer les infos client depuis l'API
-    response = requests.get(f"{API_URL}/client_info/{selected_id}")
-    if response.status_code == 200:
-        client_info = response.json()
+    # Récupérer les infos client
+    client_info = get_api_json(f"client_info/{selected_id}")
+    if client_info:
         st.subheader("📌 Informations client")
         st.json(client_info)
 
         # Prédiction
-        pred_response = requests.post(f"{API_URL}/prediction", json={"client_id": selected_id})
-        if pred_response.status_code == 200:
-            prediction = pred_response.json()["prediction"]
+        pred_data = get_api_json("prediction", method="POST", payload={"client_id": selected_id})
+        if pred_data:
+            prediction = pred_data["prediction"]
             st.subheader("🎯 Probabilité de défaut de paiement")
             st.metric(label="Score de défaut", value=f"{prediction:.2%}")
 
         # Local Feature Importance
-        shap_local = requests.get(f"{API_URL}/local_feature_importance/{selected_id}")
-        if shap_local.status_code == 200:
+        shap_local_data = get_api_json(f"local_feature_importance/{selected_id}")
+        if shap_local_data:
             st.subheader("🔎 Importance locale des features (SHAP)")
-            shap_data = shap_local.json()
-            shap_df = pd.DataFrame(list(shap_data.items()), columns=["Feature", "Importance"])
+            shap_df = pd.DataFrame(list(shap_local_data.items()), columns=["Feature", "Importance"])
+            shap_df = shap_df.sort_values("Importance", ascending=False)
             st.bar_chart(shap_df.set_index("Feature"))
 
         # SHAP Summary Plot (image encodée en base64)
-        shap_plot = requests.get(f"{API_URL}/shap_summary_plot/{selected_id}")
-        if shap_plot.status_code == 200:
+        shap_plot_data = get_api_json(f"shap_summary_plot/{selected_id}")
+        if shap_plot_data:
             st.subheader("📈 Graphique SHAP")
-            img_base64 = shap_plot.json()["shap_summary_plot"]
+            img_base64 = shap_plot_data["shap_summary_plot"]
             image = base64.b64decode(img_base64)
             st.image(io.BytesIO(image))
-
     else:
         st.error("❌ Client introuvable dans la base de test")
 
 # --- Global Feature Importance ---
+placeholder = st.empty()  # conteneur vide
+
 if st.checkbox("Afficher l’importance globale des features", key="global_importance_chk"):
-    global_importance = requests.get(f"{API_URL}/global_feature_importance")
-    if global_importance.status_code == 200:
+    global_data = get_api_json("global_feature_importance")
+    if global_data:
         st.subheader("🌍 Importance globale des features")
-        global_data = global_importance.json()
         global_df = pd.DataFrame(list(global_data.items()), columns=["Feature", "Importance"])
-        st.bar_chart(global_df.set_index("Feature"))
+        global_df = global_df.sort_values("Importance", ascending=False)
+        placeholder.bar_chart(global_df.set_index("Feature"))
+    else:
+        st.error("Impossible de récupérer l’importance globale des features.")
+else:
+    placeholder.empty()  # vide le placeholder quand on décoche
