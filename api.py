@@ -1,15 +1,15 @@
-from flask import Flask, request, jsonify
-import joblib
-import pandas as pd
-import numpy as np
-import shap
-from sklearn.preprocessing import StandardScaler
-from imblearn.over_sampling import SMOTE
-from lightgbm import LGBMClassifier
-import matplotlib.pyplot as plt
+from flask import Flask, request, jsonify # type: ignore
+import joblib # type: ignore
+import pandas as pd # type: ignore
+import numpy as np # type: ignore
+import shap # type: ignore
+from sklearn.preprocessing import StandardScaler # type: ignore
+from imblearn.over_sampling import SMOTE # type: ignore
+from lightgbm import LGBMClassifier # type: ignore
+import matplotlib.pyplot as plt # type: ignore
 import base64
 from io import BytesIO
-import plotly.express as px
+import plotly.express as px # type: ignore
 
 app = Flask(__name__)
 
@@ -120,9 +120,7 @@ def shap_summary_plot(client_id):
         shap_values = explainer(info_client_scaled, check_additivity=False)
 
         # Forcer matplotlib à utiliser un backend non interactif pour serveur
-        import matplotlib
-        matplotlib.use('Agg')
-        import matplotlib.pyplot as plt
+        matplotlib.use('Agg') # type: ignore
 
         # Créer le plot SHAP summary (bar) pour ce client
         plt.figure(figsize=(8, 6))
