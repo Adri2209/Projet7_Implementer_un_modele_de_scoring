@@ -26,6 +26,6 @@ jobs:
       - name: Deploy to Azure Web App
         uses: azure/webapps-deploy@v3
         with:
-          app-name: "master_implementer-un-modele-de-scoring"  # remplace par ton nom exact Azure
+          app-name: "master-implementer-un-modele-de-scoring"  # remplace par ton nom exact Azure
           publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE }}
           package: .
