@@ -6,6 +6,9 @@ import shap # type: ignore
 from sklearn.preprocessing import StandardScaler # type: ignore
 from imblearn.over_sampling import SMOTE # type: ignore
 from lightgbm import LGBMClassifier # type: ignore
+import matplotlib 
+# Forcer matplotlib à utiliser un backend non interactif pour serveur
+matplotlib.use('Agg') # type: ignore
 import matplotlib.pyplot as plt # type: ignore
 import base64
 from io import BytesIO
@@ -117,32 +120,26 @@ def shap_summary_plot(client_id):
         if client_data.empty:
             return jsonify({"error": "Client not found"}), 404
 
-        # Supprimer la colonne client_id
         info_client = client_data.drop('client_id', axis=1)
         info_client_scaled = scaler.transform(info_client)
 
-        # Calcul des valeurs SHAP
         shap_values = explainer(info_client_scaled, check_additivity=False)
 
-        # Forcer matplotlib à utiliser un backend non interactif pour serveur
-        matplotlib.use('Agg') # type: ignore
-
-        # Créer le plot SHAP summary (bar) pour ce client
         plt.figure(figsize=(8, 6))
         shap.summary_plot(shap_values.values, info_client, plot_type="bar", max_display=10, show=False)
 
-        # Sauvegarder l'image dans un buffer
         buf = BytesIO()
         plt.savefig(buf, format="png", bbox_inches='tight')
-        plt.close()
         buf.seek(0)
-        image_base64 = base64.b64encode(buf.getvalue()).decode('utf-8')
+        img_base64 = base64.b64encode(buf.read()).decode('utf-8')
+        plt.close()
 
-        return jsonify({"shap_summary_plot": image_base64})
-    
+        return jsonify({"shap_summary_plot": img_base64})
+
     except Exception as e:
-        # Retourner l'erreur pour debugging
-        return jsonify({"error": f"Erreur interne du serveur: {str(e)}"}), 500
+        import traceback
+        print("Erreur SHAP:", traceback.format_exc())  # pour debug dans la console
+        return jsonify({"error": str(e)}), 500
 
 @app.route('/global_feature_importance', methods=['GET'])
 def global_feature_importance():
@@ -168,5 +165,5 @@ def local_feature_importance(client_id):
 
 if __name__ == '__main__':
     import os
-    port = int(os.environ.get("PORT", 8000))  # Render fournit automatiquement le bon port
+    port = int(os.environ.get("PORT", 8000)) 
     app.run(host="0.0.0.0", port=port, debug=False)
