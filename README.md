@@ -20,7 +20,7 @@ Livrables
 Le notebook comportant l'analyse exploratoire des données, la création de features engineering et la sélection de features ainsi que l'entraînement, d'optimisation et de sélection de modèle : Adriana_Tint_modelisation.ipynb et Adriana_Tint_modelisation_suite.ipynb
 Le script python des fonctions utilisées dans le notebook : fonctions.py
 Le script python de la configuration de l’API : api.py
-Le script python de la configuration du dashboard pour Streamlit : dashboard.py
+Le script python de la configuration du dashboard pour Streamlit : app_streamlit.py
 Les scripts python des tests unitaires réalisés avec Pytest pour l’API et le dashboard : test_api.py et test_dashboard.py
 Le fichier listant les packages utilisés : requirements.txt
 API en production : https://portal.azure.com/#@adrianasarouxyahoo.onmicrosoft.com/resource/subscriptions/ec5ef1bd-626d-46ee-b027-1eeb8f83bdee/resourceGroups/modele_scoring/providers/Microsoft.Web/sites/implementer-un-modele-de-scoring/vstscd
