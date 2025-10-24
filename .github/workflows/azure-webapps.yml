@@ -16,16 +16,22 @@ jobs:
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
-          python-version: '3.10'  # à adapter si tu utilises une autre version
+          python-version: '3.10'  # adapte si besoin
 
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
           pip install -r requirements.txt
 
+      # 👇 Étape ajoutée : connexion à Azure
+      - name: Login to Azure
+        uses: azure/login@v1
+        with:
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
+
       - name: Deploy to Azure Web App
         uses: azure/webapps-deploy@v3
         with:
-          app-name: "master-implementer-un-modele-de-scoring"  # remplace par ton nom exact Azure
+          app-name: "implementer-un-modele-de-scoring"  # ton nom d’app exact
           publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE }}
           package: .
