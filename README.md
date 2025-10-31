@@ -186,7 +186,6 @@ test_api.py	Tests unitaires Flask
 test_dashboard.py	Tests unitaires Streamlit
 fonctions.py	Fonctions utilitaires du notebook
 requirements.txt	Dépendances du projet
-startup.txt	Commandes de démarrage Azure
 Adriana_Tint_modelisation.ipynb	Notebook d’analyse et de modélisation
 Adriana_Tint_modelisation_suite.ipynb	Suite du notebook principal
 README.md	Fichier de présentation du projet
