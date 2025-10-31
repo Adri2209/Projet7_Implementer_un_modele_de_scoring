@@ -34,3 +34,7 @@ antenv/
 
 # --- Fichier à garder en local uniquement ---
 api_streamlit.py
+
+# --- Fichiers locaux à ne pas versionner ---
+check_clients.py
+client_test_mean_imputed.py
