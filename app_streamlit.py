@@ -5,6 +5,8 @@ import matplotlib.pyplot as plt # type: ignore
 import base64
 import io
 
+# Mise à jour mineure pour relancer le déploiement
+
 # URL de ton API Flask
 API_URL = "https://implementer-un-modele-de-scoring-b6fwe6eegaamhkdh.francecentral-01.azurewebsites.net/"
 
