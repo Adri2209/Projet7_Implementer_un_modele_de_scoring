@@ -1,0 +1,36 @@
+# --- Fichiers temporaires ---
+__pycache__/
+.ipynb_checkpoints/
+
+# --- Données & modèles volumineux ---
+*.csv
+*.xlsx
+*.zip
+*.pkl
+*.h5
+*.sav
+*.npy
+*.npz
+*.parquet
+mlruns/
+mlflow_models*/
+mlflow_models_v*/
+
+# --- Notebooks & captures ---
+*.ipynb
+*.png
+*.jpg
+*.jpeg
+
+# --- Documents & rapports ---
+*.docx
+*.pdf
+~$*
+
+# --- Environnements virtuels ---
+env/
+.venv/
+antenv/
+
+# --- Fichier à garder en local uniquement ---
+api_streamlit.py
