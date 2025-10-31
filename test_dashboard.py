@@ -1,52 +1,60 @@
 import pytest
 import requests
-from dashboard import get_prediction
+from types import SimpleNamespace
 
-def test_get_prediction(monkeypatch):
-    # Simulation d'une réponse réussie de l'API
-    def mock_post_success(*args, **kwargs):
-        # Classe MockResponse qui simule la réponse de l'API
-        class MockResponse:
-            def __init__(self, status_code, json_data):
-                self.status_code = status_code
-                self.json_data = json_data
-                self.text = str(json_data)
-    
-            def json(self):
-                return self.json_data
-    
-            def raise_for_status(self):
-                if self.status_code != 200:
-                    raise requests.exceptions.HTTPError(f"{self.status_code} Error")
-    
-        return MockResponse(200, {"prediction": 0.75})
+# On importe la fonction à tester depuis ton fichier Streamlit
+from app_streamlit import get_api_json
 
-    monkeypatch.setattr(requests, 'post', mock_post_success)
+# --- Test de la fonction get_api_json ---
+def test_get_api_json(monkeypatch):
 
-    # Test de récupération de prédiction réussie
-    assert get_prediction(123) == 0.75
+    # Cas 1️⃣ : Simulation d'une requête POST réussie
+    def mock_post_success(url, json):
+        return SimpleNamespace(
+            status_code=200,
+            json=lambda: {"prediction": 0.85},
+            raise_for_status=lambda: None
+        )
 
-    # Simulation d'une réponse échouée de l'API
-    def mock_post_failure(*args, **kwargs):
-        class MockResponse:
-            def __init__(self, status_code, json_data):
-                self.status_code = status_code
-                self.json_data = json_data
-                self.text = str(json_data)
-    
-            def json(self):
-                return self.json_data
-    
-            def raise_for_status(self):
-                if self.status_code != 200:
-                    raise requests.exceptions.HTTPError(f"{self.status_code} Error")
-    
-        return MockResponse(400, {"error": "Invalid request"})
+    # On remplace temporairement requests.post par notre version simulée
+    monkeypatch.setattr(requests, "post", mock_post_success)
 
-    monkeypatch.setattr(requests, 'post', mock_post_failure)
+    # On appelle la fonction testée
+    response = get_api_json("prediction", method="POST", payload={"client_id": 123})
 
-    # Test de récupération de prédiction échouée
-    assert get_prediction(123) is None
+    # Vérifie que la réponse est bien interprétée
+    assert response == {"prediction": 0.85}
 
-if __name__ == '__main__':
-    pytest.main()
+    # Cas 2️⃣ : Simulation d'une erreur HTTP (code 400)
+    def mock_post_error(url, json):
+        def raise_error():
+            raise requests.exceptions.HTTPError("400 Error")
+        return SimpleNamespace(
+            status_code=400,
+            json=lambda: {"error": "Bad Request"},
+            raise_for_status=raise_error
+        )
+
+    # On remplace à nouveau requests.post
+    monkeypatch.setattr(requests, "post", mock_post_error)
+
+    # On appelle la fonction qui doit retourner None en cas d'erreur
+    response = get_api_json("prediction", method="POST", payload={"client_id": 999})
+    assert response is None
+
+    # Cas 3️⃣ : Simulation d'une requête GET réussie
+    def mock_get_success(url):
+        return SimpleNamespace(
+            status_code=200,
+            json=lambda: {"status": "ok"},
+            raise_for_status=lambda: None
+        )
+
+    monkeypatch.setattr(requests, "get", mock_get_success)
+
+    response = get_api_json("health", method="GET")
+    assert response == {"status": "ok"}
+
+
+if __name__ == "__main__":
+    pytest.main(["-v", __file__])
