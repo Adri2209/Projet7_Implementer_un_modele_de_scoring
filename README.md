@@ -37,17 +37,18 @@ des historiques de crédit et de remboursement,
 
 et des agrégations issues de plusieurs tables liées (application, bureau, POS_CASH, etc.).
 
-⚙️ Technologies et librairies utilisées
-Domaine	Outils
-Langage principal	Python 3.11
-Machine Learning	scikit-learn, lightgbm, imbalanced-learn
-Interprétabilité	SHAP, matplotlib, plotly
-API backend	Flask, gunicorn
-Dashboard frontend	Streamlit
-Environnement Cloud	Microsoft Azure (App Service)
-Suivi expérimental (MLOps)	MLflow
-Tests unitaires	pytest
-Gestion de version	Git / GitHub
+| **Domaine**                   | **Outils**                                     |
+| ----------------------------- | ---------------------------------------------- |
+| 🐍 Langage principal          | Python 3.11                                    |
+| 🤖 Machine Learning           | `scikit-learn`, `lightgbm`, `imbalanced-learn` |
+| 🔍 Interprétabilité           | `SHAP`, `matplotlib`, `plotly`                 |
+| 🧩 API backend                | `Flask`, `gunicorn`                            |
+| 📊 Dashboard frontend         | `Streamlit`                                    |
+| ☁️ Environnement Cloud        | Microsoft Azure (App Service)                  |
+| 📈 Suivi expérimental (MLOps) | `MLflow`                                       |
+| 🧪 Tests unitaires            | `pytest`                                       |
+| 💾 Gestion de version         | `Git / GitHub`                                 |
+
 🧩 Architecture du projet
 OC-P7-Implémentez-un-modèle-de-scoring/
 │
