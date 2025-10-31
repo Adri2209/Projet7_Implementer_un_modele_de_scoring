@@ -51,17 +51,18 @@ et des agrégations issues de plusieurs tables liées (application, bureau, POS_
 
 🧩 Architecture du projet
 OC-P7-Implémentez-un-modèle-de-scoring/
-│
-├── api.py                       # API Flask - endpoints de scoring et SHAP
-├── app_streamlit.py              # Dashboard Streamlit connecté à l'API
-├── test_api.py                   # Tests unitaires Flask
-├── test_dashboard.py             # Tests unitaires Streamlit
-├── fonctions.py                  # Fonctions utilitaires du notebook
-├── requirements.txt              # Dépendances du projet
-├── startup.txt                   # Commandes de démarrage Azure
-├── Adriana_Tint_modelisation.ipynb
-├── Adriana_Tint_modelisation_suite.ipynb
-└── README.md                     # Ce fichier
+| **Fichier / Dossier**                   | **Description**                          |
+| --------------------------------------- | ---------------------------------------- |
+| `api.py`                                | API Flask – endpoints de scoring et SHAP |
+| `app_streamlit.py`                      | Dashboard Streamlit connecté à l’API     |
+| `test_api.py`                           | Tests unitaires Flask                    |
+| `test_dashboard.py`                     | Tests unitaires Streamlit                |
+| `fonctions.py`                          | Fonctions utilitaires du notebook        |
+| `requirements.txt`                      | Dépendances du projet                    |
+| `startup.txt`                           | Commandes de démarrage Azure             |
+| `Adriana_Tint_modelisation.ipynb`       | Notebook d’analyse et de modélisation    |
+| `Adriana_Tint_modelisation_suite.ipynb` | Suite du notebook principal              |
+| `README.md`                             | Fichier de présentation du projet        |
 
 🚀 Déploiement
 
