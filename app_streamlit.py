@@ -6,7 +6,7 @@ import base64
 import io
 
 # URL de ton API Flask
-API_URL = "http://127.0.0.1:8000"
+API_URL = "https://implementer-un-modele-de-scoring-b6fwe6eegaamhkdh.francecentral-01.azurewebsites.net/"
 
 st.set_page_config(page_title="Dashboard Scoring Crédit", layout="wide")
 st.title("📊 Dashboard de Scoring Crédit")
