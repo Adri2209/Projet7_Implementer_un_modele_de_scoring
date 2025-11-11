@@ -38,7 +38,7 @@ client_choice = st.sidebar.selectbox(
 )
 
 client_id_input = st.sidebar.number_input(
-    "Ou entrer un ID manuellement",
+    "Ou entrer un ID manuellement (facultatif)",
     min_value=1,
     step=1,
     key="client_id_input"
@@ -46,8 +46,11 @@ client_id_input = st.sidebar.number_input(
 
 # --- Bouton pour charger les infos ---
 if st.button("Charger les infos client", key="load_client_btn"):
-    # Priorité au number_input si l'utilisateur a entré un ID
-    selected_id = client_id_input if client_id_input else client_choice
+    # Si l'utilisateur a saisi un ID différent de celui du menu, on le prend
+    if client_id_input != client_choice:
+        selected_id = client_id_input
+    else:
+        selected_id = client_choice
 
     # Récupérer les infos client
     client_info = get_api_json(f"client_info/{selected_id}")
